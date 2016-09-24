@@ -57,7 +57,7 @@ func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 	}
 
 	ghr := ghFileResponse{}
-	if err := json.NewDecoder(res.Body).Decode(&ghr); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(&ghr); err != nil {
 		return nil, err
 	}
 

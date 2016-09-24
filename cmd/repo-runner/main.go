@@ -169,7 +169,7 @@ func startJob(payload pushPayload) {
 
 	log.Printf("[INFO] (%s | %.7s) Refreshing docker image '%s'",
 		payload.Repository.FullName, payload.After, runnerFile.Image)
-	if err := dockerClient.PullImage(docker.PullImageOptions{
+	if err = dockerClient.PullImage(docker.PullImageOptions{
 		Repository: dockerRepo,
 		Tag:        dockerTag,
 		Context:    ctx,
@@ -198,7 +198,7 @@ func startJob(payload pushPayload) {
 
 	log.Printf("[INFO] (%s | %.7s) Starting build with container '%s'",
 		payload.Repository.FullName, payload.After, container.Name)
-	if err := dockerClient.StartContainer(container.ID, &docker.HostConfig{}); err != nil {
+	if err = dockerClient.StartContainer(container.ID, &docker.HostConfig{}); err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Starting container failed: %s",
 			payload.Repository.FullName, payload.After, err)
 		return
