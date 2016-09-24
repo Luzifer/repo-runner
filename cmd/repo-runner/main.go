@@ -101,11 +101,21 @@ func startJob(payload pushPayload) {
 	defer cancel()
 
 	logID := uuid.NewV4().String()
-	if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "pending",
-		"Build started with ID "+logID); err != nil {
+	buildStatus := githubBuildStatus{
+		Repo:        payload.Repository.FullName,
+		SHA:         payload.After,
+		State:       "pending",
+		Description: "Build started with ID " + logID,
+	}
+
+	if err := buildStatus.Set(ctx); err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
 			payload.Repository.FullName, payload.After, err)
 	}
+
+	buildStatus.State = "error"
+	buildStatus.Description = "An unknown build error occurred"
+	defer buildStatus.Set(context.Background())
 
 	buildLog := bytes.NewBuffer([]byte{})
 	defer func() {
@@ -240,17 +250,11 @@ func startJob(payload pushPayload) {
 			}
 
 			if ct.State.ExitCode == 0 {
-				if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "success",
-					fmt.Sprintf("Build with ID %s exited with status 0", logID)); err != nil {
-					log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
-						payload.Repository.FullName, payload.After, err)
-				}
+				buildStatus.State = "success"
+				buildStatus.Description = fmt.Sprintf("Build with ID %s exited with status 0", logID)
 			} else {
-				if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "failure",
-					fmt.Sprintf("Build with ID %s exited with status %d", logID, ct.State.ExitCode)); err != nil {
-					log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
-						payload.Repository.FullName, payload.After, err)
-				}
+				buildStatus.State = "failure"
+				buildStatus.Description = fmt.Sprintf("Build with ID %s exited with status %d", logID, ct.State.ExitCode)
 			}
 
 			keepWaiting = false

@@ -29,7 +29,11 @@ func (p pushPayload) String() string {
 	return buf.String()
 }
 
-func setGithubBuildStatus(ctx context.Context, repo, sha, state, description string) error {
+type githubBuildStatus struct {
+	Repo, SHA, State, Description string
+}
+
+func (g githubBuildStatus) Set(ctx context.Context) error {
 	// https://developer.github.com/v3/repos/statuses/#create-a-status
 	// POST /repos/:owner/:repo/statuses/:sha
 
@@ -43,14 +47,14 @@ func setGithubBuildStatus(ctx context.Context, repo, sha, state, description str
 		Description string `json:"description"`
 		Context     string `json:"json:"context""`
 	}{
-		State:       state,
-		Description: description,
+		State:       g.State,
+		Description: g.Description,
 		Context:     "continuous-integration/repo-runner",
 	}); err != nil {
 		return err
 	}
 
-	u := fmt.Sprintf("https://api.github.com/repos/%s/statuses/%s", repo, sha)
+	u := fmt.Sprintf("https://api.github.com/repos/%s/statuses/%s", g.Repo, g.SHA)
 	req, err := http.NewRequest("POST", u, buf)
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth("auth", cfg.GithubToken)
