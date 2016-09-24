@@ -167,10 +167,9 @@ func startJob(payload pushPayload) {
 	log.Printf("[INFO] (%s | %.7s) Refreshing docker image '%s'",
 		payload.Repository.FullName, payload.After, runnerFile.Image)
 	if err := dockerClient.PullImage(docker.PullImageOptions{
-		Repository:   dockerRepo,
-		Tag:          dockerTag,
-		OutputStream: buildLog,
-		Context:      ctx,
+		Repository: dockerRepo,
+		Tag:        dockerTag,
+		Context:    ctx,
 	}, auth); err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Could not refresh docker image '%s': %s",
 			payload.Repository.FullName, payload.After, runnerFile.Image, err)
