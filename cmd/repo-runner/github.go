@@ -13,7 +13,7 @@ type pushPayload struct {
 	Repository struct {
 		FullName string `json:"full_name"`
 		Private  bool   `json:"private"`
-		SSHURL   string `json:"ssh_url"`
+		CloneURL string `json:"clone_url"`
 	} `json:"repository"`
 }
 

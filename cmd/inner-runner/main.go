@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/Luzifer/rconfig"
 	"github.com/Luzifer/repo-runner"
+	homedir "github.com/mitchellh/go-homedir"
 )
 
 var (
@@ -31,8 +33,16 @@ func init() {
 }
 
 func main() {
+	netrcLocation, err := homedir.Expand("~/.netrc")
+
+	log.Printf("[INFO] Setting access token for HTTPs clone")
+	netrcContent := fmt.Sprintf("machine github.com\nlogin auth\npassword %s", os.Getenv("GITHUB_TOKEN"))
+	if err := ioutil.WriteFile(netrcLocation, []byte(netrcContent), 0600); err != nil {
+		log.Fatalf("[FATA] Unable to write ~/.netrc: %s", err)
+	}
+
 	log.Printf("[INFO] Checking out repository to /src")
-	if err := execute("", "/usr/bin/git", "clone", os.Getenv("SSH_URL"), "/src"); err != nil {
+	if err := execute("", "/usr/bin/git", "clone", os.Getenv("CLONE_URL"), "/src"); err != nil {
 		log.Fatalf("[FATA] Could not clone repository: %s", err)
 	}
 

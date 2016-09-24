@@ -136,9 +136,10 @@ func startJob(payload pushPayload) {
 		}
 	}
 
-	envMap["SSH_URL"] = payload.Repository.SSHURL
+	envMap["CLONE_URL"] = payload.Repository.CloneURL
 	envMap["REVISION"] = payload.After
 	envMap["PAYLOAD"] = payload.String()
+	envMap["GITHUB_TOKEN"] = cfg.GithubToken
 
 	envVars := env.MapToList(envMap)
 
