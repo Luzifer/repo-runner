@@ -18,6 +18,7 @@ const (
 	defaultFetchTimeout       = 5 * time.Second
 )
 
+// RunnerFile contains the instructions what to run when executing build for the specific repo
 type RunnerFile struct {
 	Image       string            `yaml:"image"`
 	Commands    []string          `yaml:"commands"`
@@ -28,6 +29,7 @@ type ghFileResponse struct {
 	Content string `json:"content"`
 }
 
+// LoadFromGithub uses the Github API to fetch the RunnerFile from the repo before pulling the repository
 func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 	// https://developer.github.com/v3/repos/contents/#get-contents
 	// GET /repos/:owner/:repo/contents/:path
@@ -70,6 +72,7 @@ func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 	return rf, yaml.Unmarshal(yamlData, rf)
 }
 
+// LoadFromFile loads a local RunnerFile
 func LoadFromFile(filename string) (*RunnerFile, error) {
 	if _, err := os.Stat(filename); err != nil {
 		return nil, err
