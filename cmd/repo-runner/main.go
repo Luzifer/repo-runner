@@ -101,7 +101,7 @@ func startJob(payload pushPayload) {
 	defer cancel()
 
 	logID := uuid.NewV4().String()
-	buildStatus := githubBuildStatus{
+	buildStatus := &githubBuildStatus{
 		Repo:        payload.Repository.FullName,
 		SHA:         payload.After,
 		State:       "pending",
@@ -115,7 +115,7 @@ func startJob(payload pushPayload) {
 
 	buildStatus.State = "error"
 	buildStatus.Description = "An unknown build error occurred"
-	defer buildStatus.Set(context.Background())
+	defer func() { buildStatus.Set(context.Background()) }()
 
 	buildLog := bytes.NewBuffer([]byte{})
 	defer func() {
