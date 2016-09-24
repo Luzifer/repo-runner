@@ -217,8 +217,14 @@ func startJob(payload pushPayload) {
 					payload.Repository.FullName, payload.After, err)
 			}
 		case <-doneChan:
-			log.Printf("[INFO] (%s | %.7s) Work is done or time is over, cleaning up",
-				payload.Repository.FullName, payload.After)
+			ct, err := dockerClient.InspectContainer(container.ID)
+			if err != nil {
+				log.Printf("[ERRO] (%s | %.7s) Could not fetch exit status of the container: %s",
+					payload.Repository.FullName, payload.After, err)
+			}
+
+			log.Printf("[INFO] (%s | %.7s) Work is done or time is over. Build exitted with status %d",
+				payload.Repository.FullName, payload.After, ct.State.ExitCode)
 			if err := dockerClient.RemoveContainer(docker.RemoveContainerOptions{
 				ID:            container.ID,
 				RemoveVolumes: true,
