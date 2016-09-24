@@ -228,7 +228,7 @@ func startJob(payload pushPayload) {
 					payload.Repository.FullName, payload.After, err)
 			}
 
-			log.Printf("[INFO] (%s | %.7s) Work is done or time is over. Build exitted with status %d",
+			log.Printf("[INFO] (%s | %.7s) Work is done or time is over. Build exited with status %d",
 				payload.Repository.FullName, payload.After, ct.State.ExitCode)
 			if err := dockerClient.RemoveContainer(docker.RemoveContainerOptions{
 				ID:            container.ID,
