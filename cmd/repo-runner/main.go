@@ -100,30 +100,31 @@ func startJob(payload pushPayload) {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.MaxBuildTime)
 	defer cancel()
 
+	logID := uuid.NewV4().String()
+
 	buildLog := bytes.NewBuffer([]byte{})
 	defer func() {
-		logID := uuid.NewV4().String()
 		logPath := path.Join(cfg.LogDir, logID+".txt")
 
 		if err := os.MkdirAll(cfg.LogDir, 0755); err != nil {
-			log.Printf("[ERRO] (%s | %s) Could not ensure log dir: %s",
+			log.Printf("[ERRO] (%s | %.7s) Could not ensure log dir: %s",
 				payload.Repository.FullName, payload.After, err)
 			return
 		}
 
 		if err := ioutil.WriteFile(logPath, buildLog.Bytes(), 0644); err != nil {
-			log.Printf("[ERRO] (%s | %s) Could not write log file: %s",
+			log.Printf("[ERRO] (%s | %.7s) Could not write log file: %s",
 				payload.Repository.FullName, payload.After, err)
 			return
 		}
 
-		log.Printf("[INFO] (%s | %s) Build log was written to %s",
+		log.Printf("[INFO] (%s | %.7s) Build log was written to %s",
 			payload.Repository.FullName, payload.After, logPath)
 	}()
 
 	runnerFile, err := repo_runner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
 	if err != nil {
-		log.Printf("[ERRO] (%s | %s) Could not fetch runner file: %s",
+		log.Printf("[ERRO] (%s | %.7s) Could not fetch runner file: %s",
 			payload.Repository.FullName, payload.After, err)
 		return
 	}
@@ -147,7 +148,7 @@ func startJob(payload pushPayload) {
 		auth = docker.AuthConfiguration{}
 	}
 
-	log.Printf("[INFO] (%s | %s) Refreshing docker image '%s'",
+	log.Printf("[INFO] (%s | %.7s) Refreshing docker image '%s'",
 		payload.Repository.FullName, payload.After, runnerFile.Image)
 	if err := dockerClient.PullImage(docker.PullImageOptions{
 		Repository:   dockerRepo,
@@ -155,35 +156,37 @@ func startJob(payload pushPayload) {
 		OutputStream: buildLog,
 		Context:      ctx,
 	}, auth); err != nil {
-		log.Printf("[ERRO] (%s | %s) Could not refresh docker image '%s': %s",
+		log.Printf("[ERRO] (%s | %.7s) Could not refresh docker image '%s': %s",
 			payload.Repository.FullName, payload.After, runnerFile.Image, err)
 		return
 	}
 
-	log.Printf("[INFO] (%s | %s) Creating container",
+	log.Printf("[INFO] (%s | %.7s) Creating container",
 		payload.Repository.FullName, payload.After)
 	container, err := dockerClient.CreateContainer(docker.CreateContainerOptions{
+		Name: logID,
 		Config: &docker.Config{
+			Image:   runnerFile.Image,
 			Env:     envVars,
 			Volumes: map[string]struct{}{},
 			Mounts:  []docker.Mount{}, //TODO: Fill me
 		},
 	})
 	if err != nil {
-		log.Printf("[ERRO] (%s | %s) Could not create container: %s",
+		log.Printf("[ERRO] (%s | %.7s) Could not create container: %s",
 			payload.Repository.FullName, payload.After, err)
 		return
 	}
 
-	log.Printf("[INFO] (%s | %s) Starting build with container '%s'",
+	log.Printf("[INFO] (%s | %.7s) Starting build with container '%s'",
 		payload.Repository.FullName, payload.After, container.Name)
 	if err := dockerClient.StartContainer(container.ID, &docker.HostConfig{}); err != nil {
-		log.Printf("[ERRO] (%s | %s) Starting container failed: %s",
+		log.Printf("[ERRO] (%s | %.7s) Starting container failed: %s",
 			payload.Repository.FullName, payload.After, err)
 		return
 	}
 
-	log.Printf("[INFO] (%s | %s) Attaching to container logs",
+	log.Printf("[INFO] (%s | %.7s) Attaching to container logs",
 		payload.Repository.FullName, payload.After)
 	cw, err := dockerClient.AttachToContainerNonBlocking(docker.AttachToContainerOptions{
 		Container:    container.ID,
@@ -195,7 +198,7 @@ func startJob(payload pushPayload) {
 		Stderr:       true,
 	})
 	if err != nil {
-		log.Printf("[ERRO] (%s | %s) Could not attach to container logs: %s",
+		log.Printf("[ERRO] (%s | %.7s) Could not attach to container logs: %s",
 			payload.Repository.FullName, payload.After, err)
 		return
 	}
@@ -209,18 +212,18 @@ func startJob(payload pushPayload) {
 		select {
 		case <-ctx.Done():
 			if err := dockerClient.StopContainer(container.ID, 30); err != nil {
-				log.Printf("[ERRO] (%s | %s) Stopping container failed: %s",
+				log.Printf("[ERRO] (%s | %.7s) Stopping container failed: %s",
 					payload.Repository.FullName, payload.After, err)
 			}
 		case <-doneChan:
-			log.Printf("[INFO] (%s | %s) Work is done or time is over, cleaning up",
+			log.Printf("[INFO] (%s | %.7s) Work is done or time is over, cleaning up",
 				payload.Repository.FullName, payload.After)
 			if err := dockerClient.RemoveContainer(docker.RemoveContainerOptions{
 				ID:            container.ID,
 				RemoveVolumes: true,
 				Force:         true,
 			}); err != nil {
-				log.Printf("[ERRO] (%s | %s) Removing container failed: %s",
+				log.Printf("[ERRO] (%s | %.7s) Removing container failed: %s",
 					payload.Repository.FullName, payload.After, err)
 			}
 			keepWaiting = false
