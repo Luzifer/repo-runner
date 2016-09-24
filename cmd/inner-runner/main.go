@@ -46,7 +46,7 @@ func main() {
 		log.Fatalf("[FATA] Could not clone repository: %s", err)
 	}
 
-	log.Printf("[INFO] Checking out rev %s in repository")
+	log.Printf("[INFO] Checking out rev %s in repository", os.Getenv("REVISION"))
 	if err := execute("/src", "/usr/bin/git", "reset", "--hard", os.Getenv("REVISION")); err != nil {
 		log.Fatalf("[FATA] Could not check out revision: %s", err)
 	}
@@ -66,6 +66,7 @@ func main() {
 func execute(dir, name string, args ...string) error {
 	log.Printf("[INFO] Exec: %s %s", name, strings.Join(args, " "))
 	cmd := exec.Command(name, args...)
+	cmd.Dir = dir
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Env = os.Environ()
