@@ -24,6 +24,7 @@ import (
 var (
 	cfg = struct {
 		DefaultEnv     []string      `flag:"default-env,e" default:"" description:"Environment variables to set when starting the container"`
+		DefaultMount   []string      `flag:"default-mount,v" default:"" description:"Mountpoints to be forced into the container"`
 		DockerSocket   string        `flag:"docker-sock" default:"unix:///var/run/docker.sock" description:"Docker socket / tcp address"`
 		GithubToken    string        `flag:"github-token" env:"GITHUB_TOKEN" default:"" description:"Personal Access Token to fetch config from private Repos"`
 		Listen         string        `flag:"listen" default:":3000" description:"IP/Port to listen on"`
@@ -158,6 +159,8 @@ func startJob(payload pushPayload) {
 
 	envVars := env.MapToList(envMap)
 
+	mounts, volumes := parseMounts(cfg.DefaultMount)
+
 	dockerRepo, dockerTag := docker.ParseRepositoryTag(runnerFile.Image)
 	auth, authAvailable := dockerAuth.Configs[strings.SplitN(dockerRepo, "/", 2)[0]]
 	if !authAvailable {
@@ -183,8 +186,8 @@ func startJob(payload pushPayload) {
 		Config: &docker.Config{
 			Image:   runnerFile.Image,
 			Env:     envVars,
-			Volumes: map[string]struct{}{},
-			Mounts:  []docker.Mount{}, //TODO: Fill me
+			Volumes: volumes,
+			Mounts:  mounts,
 		},
 	})
 	if err != nil {
@@ -259,4 +262,33 @@ func startJob(payload pushPayload) {
 			keepWaiting = false
 		}
 	}
+}
+
+func parseMounts(mountIn []string) (mounts []docker.Mount, volumes map[string]struct{}) {
+	volumes = make(map[string]struct{})
+	for _, m := range mountIn {
+		if len(m) == 0 {
+			continue
+		}
+
+		parts := strings.Split(m, ":")
+		if len(parts) != 2 && len(parts) != 3 {
+			log.Printf("[ERRO] Invalid default mount: %s", m)
+			continue
+		}
+
+		mo := docker.Mount{
+			Source:      parts[0],
+			Destination: parts[1],
+		}
+
+		if len(parts) == 3 {
+			mo.RW = (parts[3] != "ro")
+		}
+
+		mounts = append(mounts, mo)
+		volumes[mo.Destination] = struct{}{}
+	}
+
+	return
 }
