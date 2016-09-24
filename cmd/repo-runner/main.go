@@ -15,7 +15,7 @@ import (
 
 	"github.com/Luzifer/go_helpers/env"
 	"github.com/Luzifer/rconfig"
-	"github.com/Luzifer/repo-runner"
+	reporunner "github.com/Luzifer/repo-runner"
 	"github.com/ejholmes/hookshot"
 	docker "github.com/fsouza/go-dockerclient"
 	uuid "github.com/satori/go.uuid"
@@ -138,7 +138,7 @@ func startJob(payload pushPayload) {
 			payload.Repository.FullName, payload.After, logPath)
 	}()
 
-	runnerFile, err := repo_runner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
+	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
 	if err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Could not fetch runner file: %s",
 			payload.Repository.FullName, payload.After, err)

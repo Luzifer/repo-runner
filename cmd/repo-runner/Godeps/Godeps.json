@@ -15,8 +15,8 @@
 		},
 		{
 			"ImportPath": "github.com/Luzifer/repo-runner",
-			"Comment": "v0.1.0-1-g753363b",
-			"Rev": "753363b4944b36427a77b77141414b56b2adf8c6"
+			"Comment": "v0.1.0-5-g8d29a0b",
+			"Rev": "8d29a0b33d784f648b4826c7447dadefd35a8163"
 		},
 		{
 			"ImportPath": "github.com/Microsoft/go-winio",

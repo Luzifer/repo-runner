@@ -1,4 +1,4 @@
-package repo_runner
+package reporunner
 
 import (
 	"context"

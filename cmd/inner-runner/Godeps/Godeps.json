@@ -10,7 +10,8 @@
 		},
 		{
 			"ImportPath": "github.com/Luzifer/repo-runner",
-			"Rev": "0bb825d00c1cc87ba73c4229c3c749facb0bf426"
+			"Comment": "v0.1.0-5-g4a87b13",
+			"Rev": "4a87b139d6508be4d70fd26c264e65cf811aa40a"
 		},
 		{
 			"ImportPath": "github.com/mitchellh/go-homedir",

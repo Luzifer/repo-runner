@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Luzifer/rconfig"
-	"github.com/Luzifer/repo-runner"
+	reporunner "github.com/Luzifer/repo-runner"
 	homedir "github.com/mitchellh/go-homedir"
 )
 
@@ -51,7 +51,7 @@ func main() {
 		log.Fatalf("[FATA] Could not check out revision: %s", err)
 	}
 
-	runnerFile, err := repo_runner.LoadFromFile("/src/.repo-runner.yaml")
+	runnerFile, err := reporunner.LoadFromFile("/src/.repo-runner.yaml")
 	if err != nil {
 		log.Fatalf("[FATA] Could not load runner-configuration: %s", err)
 	}
