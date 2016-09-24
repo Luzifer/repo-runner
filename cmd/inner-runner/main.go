@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/Luzifer/rconfig"
 	"github.com/Luzifer/repo-runner"
@@ -32,12 +33,12 @@ func init() {
 func main() {
 	log.Printf("[INFO] Checking out repository to /src")
 	if err := execute("", "/usr/bin/git", "clone", os.Getenv("SSH_URL"), "/src"); err != nil {
-		log.Fatalf("[FATA] Could not clone repository, stopping now.")
+		log.Fatalf("[FATA] Could not clone repository: %s", err)
 	}
 
 	log.Printf("[INFO] Checking out rev %s in repository")
 	if err := execute("/src", "/usr/bin/git", "reset", "--hard", os.Getenv("REVISION")); err != nil {
-		log.Fatalf("[FATA] Could not check out revision, stopping now.")
+		log.Fatalf("[FATA] Could not check out revision: %s", err)
 	}
 
 	runnerFile, err := repo_runner.LoadFromFile("/src/.repo-runner.yaml")
@@ -53,6 +54,7 @@ func main() {
 }
 
 func execute(dir, name string, args ...string) error {
+	log.Printf("[INFO] Exec: %s %s", name, strings.Join(args, " "))
 	cmd := exec.Command(name, args...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
