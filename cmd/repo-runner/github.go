@@ -2,8 +2,13 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
 )
 
 type pushPayload struct {
@@ -22,4 +27,46 @@ func (p pushPayload) String() string {
 	b64buf := base64.NewEncoder(base64.StdEncoding, buf)
 	json.NewEncoder(b64buf).Encode(p)
 	return buf.String()
+}
+
+func setGithubBuildStatus(ctx context.Context, repo, sha, state, description string) error {
+	// https://developer.github.com/v3/repos/statuses/#create-a-status
+	// POST /repos/:owner/:repo/statuses/:sha
+
+	if cfg.GithubToken == "" {
+		return errors.New("Status can only get set when Gitub token is available")
+	}
+
+	buf := bytes.NewBuffer([]byte{})
+	if err := json.NewEncoder(buf).Encode(struct {
+		State       string `json:"state"`
+		Description string `json:"description"`
+		Context     string `json:"json:"context""`
+	}{
+		State:       state,
+		Description: description,
+		Context:     "continuous-integration/repo-runner",
+	}); err != nil {
+		return err
+	}
+
+	u := fmt.Sprintf("https://api.github.com/repos/%s/statuses/%s", repo, sha)
+	req, err := http.NewRequest("POST", u, buf)
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth("auth", cfg.GithubToken)
+
+	reqctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	res, err := http.DefaultClient.Do(req.WithContext(reqctx))
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 201 {
+		return fmt.Errorf("Received unexpected status code: %d", res.StatusCode)
+	}
+
+	return nil
 }

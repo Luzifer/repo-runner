@@ -101,6 +101,11 @@ func startJob(payload pushPayload) {
 	defer cancel()
 
 	logID := uuid.NewV4().String()
+	if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "pending",
+		"Build started with ID "+logID); err != nil {
+		log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
+			payload.Repository.FullName, payload.After, err)
+	}
 
 	buildLog := bytes.NewBuffer([]byte{})
 	defer func() {
@@ -233,6 +238,21 @@ func startJob(payload pushPayload) {
 				log.Printf("[ERRO] (%s | %.7s) Removing container failed: %s",
 					payload.Repository.FullName, payload.After, err)
 			}
+
+			if ct.State.ExitCode == 0 {
+				if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "success",
+					fmt.Sprintf("Build with ID %s exited with status 0", logID)); err != nil {
+					log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
+						payload.Repository.FullName, payload.After, err)
+				}
+			} else {
+				if err := setGithubBuildStatus(ctx, payload.Repository.FullName, payload.After, "failure",
+					fmt.Sprintf("Build with ID %s exited with status %d", logID, ct.State.ExitCode)); err != nil {
+					log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
+						payload.Repository.FullName, payload.After, err)
+				}
+			}
+
 			keepWaiting = false
 		}
 	}
