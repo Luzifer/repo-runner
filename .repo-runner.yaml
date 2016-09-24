@@ -1,0 +1,6 @@
+---
+
+image: "golang:alpine"
+
+commands:
+  - make ci
