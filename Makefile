@@ -1,6 +1,6 @@
 VERSION := $(shell git describe --tags --exact-match)
 
-ci: qa publish
+ci: publish
 
 qa:
 	go get gopkg.in/alecthomas/gometalinter.v1
