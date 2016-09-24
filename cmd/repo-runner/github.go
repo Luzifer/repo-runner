@@ -45,7 +45,7 @@ func (g githubBuildStatus) Set(ctx context.Context) error {
 	if err := json.NewEncoder(buf).Encode(struct {
 		State       string `json:"state"`
 		Description string `json:"description"`
-		Context     string `json:"json:"context""`
+		Context     string `json:"context"`
 	}{
 		State:       g.State,
 		Description: g.Description,
