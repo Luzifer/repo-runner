@@ -1,3 +1,10 @@
+# 0.5.0 / 2016-09-25
+
+  * [runner] Implement log streaming with linked URL on Github
+  * [runner] Differentiate between files and volumes when mounting paths
+  * [runner] Add privileged flag
+  * [image] Install docker in image
+
 # 0.4.2 / 2016-09-25
 
   * Fix: Forbid using CGO
@@ -16,7 +23,7 @@
 
 # 0.3.0 / 2016-09-25
 
-  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp;amp;amp;amp; head
+  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag and head
 
 # 0.2.1 / 2016-09-25
 
