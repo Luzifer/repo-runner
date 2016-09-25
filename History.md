@@ -1,6 +1,10 @@
+# 0.3.1 / 2016-09-25
+
+  * Move code into GOPATH on CI
+
 # 0.3.0 / 2016-09-25
 
-  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag & head
+  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp; head
 
 # 0.2.1 / 2016-09-25
 
