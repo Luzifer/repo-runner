@@ -1,3 +1,7 @@
+# 0.3.0 / 2016-09-25
+
+  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag & head
+
 # 0.2.1 / 2016-09-25
 
   * Fix: Install linters before using
