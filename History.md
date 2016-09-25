@@ -1,3 +1,7 @@
+# 0.4.2 / 2016-09-25
+
+  * Fix: Forbid using CGO
+
 # 0.4.1 / 2016-09-25
 
   * Remove workdir statement
@@ -12,7 +16,7 @@
 
 # 0.3.0 / 2016-09-25
 
-  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp;amp;amp; head
+  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp;amp;amp;amp; head
 
 # 0.2.1 / 2016-09-25
 
