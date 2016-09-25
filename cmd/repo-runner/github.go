@@ -30,7 +30,7 @@ func (p pushPayload) String() string {
 }
 
 type githubBuildStatus struct {
-	Repo, SHA, State, Description string
+	Repo, SHA, State, Description, TargetURL string
 }
 
 func (g githubBuildStatus) Set(ctx context.Context) error {
@@ -44,12 +44,14 @@ func (g githubBuildStatus) Set(ctx context.Context) error {
 	buf := bytes.NewBuffer([]byte{})
 	if err := json.NewEncoder(buf).Encode(struct {
 		State       string `json:"state"`
-		Description string `json:"description"`
+		Description string `json:"description,omitempty"`
 		Context     string `json:"context"`
+		TargetURL   string `json:"target_url,omitempty"`
 	}{
 		State:       g.State,
 		Description: g.Description,
 		Context:     "continuous-integration/repo-runner",
+		TargetURL:   g.TargetURL,
 	}); err != nil {
 		return err
 	}

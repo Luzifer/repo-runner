@@ -1,11 +1,11 @@
 package main
 
+//go:generate go-bindata -pkg $GOPACKAGE -o assets.go assets/
+
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -19,11 +19,13 @@ import (
 	reporunner "github.com/Luzifer/repo-runner"
 	"github.com/ejholmes/hookshot"
 	docker "github.com/fsouza/go-dockerclient"
+	"github.com/gorilla/mux"
 	uuid "github.com/satori/go.uuid"
 )
 
 var (
 	cfg = struct {
+		BaseURL        string        `flag:"base-url" default:"http://127.0.0.1:3000" description:"URL this is reachable at (for build status URLs)"`
 		DefaultEnv     []string      `flag:"default-env,e" default:"" description:"Environment variables to set when starting the container"`
 		DefaultMount   []string      `flag:"default-mount,v" default:"" description:"Mountpoints to be forced into the container"`
 		DockerSocket   string        `flag:"docker-sock" default:"unix:///var/run/docker.sock" description:"Docker socket / tcp address"`
@@ -65,15 +67,19 @@ func main() {
 		log.Printf("[WARN] Could not load docker auth configuration")
 	}
 
-	r := hookshot.NewRouter()
+	hr := hookshot.NewRouter()
 
 	if cfg.RequireSecret == "" {
-		r.Handle("ping", pingHandler{})
-		r.Handle("push", pushHandler{})
+		hr.Handle("ping", pingHandler{})
+		hr.Handle("push", pushHandler{})
 	} else {
-		r.Handle("ping", hookshot.Authorize(pingHandler{}, cfg.RequireSecret))
-		r.Handle("push", hookshot.Authorize(pushHandler{}, cfg.RequireSecret))
+		hr.Handle("ping", hookshot.Authorize(pingHandler{}, cfg.RequireSecret))
+		hr.Handle("push", hookshot.Authorize(pushHandler{}, cfg.RequireSecret))
 	}
+
+	r := mux.NewRouter()
+	r.Handle("/hook", hr)
+	registerLogHandlers(r.PathPrefix("/log").Subrouter())
 
 	http.ListenAndServe(cfg.Listen, r)
 }
@@ -109,6 +115,7 @@ func startJob(payload pushPayload) {
 		SHA:         payload.After,
 		State:       "pending",
 		Description: "Build started with ID " + logID,
+		TargetURL:   strings.TrimRight(cfg.BaseURL, "/") + "/log/" + logID,
 	}
 
 	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
@@ -140,24 +147,29 @@ func startJob(payload pushPayload) {
 	buildStatus.Description = "An unknown build error occurred"
 	defer func() { buildStatus.Set(context.Background()) }()
 
-	buildLog := bytes.NewBuffer([]byte{})
+	logPath := path.Join(cfg.LogDir, logID+".jsonl")
+
+	if err := os.MkdirAll(cfg.LogDir, 0755); err != nil {
+		log.Printf("[FATA] (%s | %.7s) Could not ensure log dir: %s",
+			payload.Repository.FullName, payload.After, err)
+		return
+	}
+	buildLog, err := os.Create(logPath)
+	if err != nil {
+		log.Printf("[FATA] (%s | %.7s) Could not open log file for writing: %s",
+			payload.Repository.FullName, payload.After, err)
+		return
+	}
+	buildLogMeta := newLogWriter("meta", buildLog)
+	buildLogStdOut := newLogWriter("stdout", buildLog)
+	buildLogStdErr := newLogWriter("stderr", buildLog)
+
+	buildLogMeta.MetaMessage(logTypeMetaStart, payload.String())
+
 	defer func() {
-		logPath := path.Join(cfg.LogDir, logID+".txt")
-
-		if err := os.MkdirAll(cfg.LogDir, 0755); err != nil {
-			log.Printf("[ERRO] (%s | %.7s) Could not ensure log dir: %s",
-				payload.Repository.FullName, payload.After, err)
-			return
-		}
-
-		if err := ioutil.WriteFile(logPath, buildLog.Bytes(), 0644); err != nil {
-			log.Printf("[ERRO] (%s | %.7s) Could not write log file: %s",
-				payload.Repository.FullName, payload.After, err)
-			return
-		}
-
 		log.Printf("[INFO] (%s | %.7s) Build log was written to %s",
 			payload.Repository.FullName, payload.After, logPath)
+		buildLog.Close()
 	}()
 
 	envMap := env.ListToMap(cfg.DefaultEnv)
@@ -228,8 +240,8 @@ func startJob(payload pushPayload) {
 		payload.Repository.FullName, payload.After)
 	cw, err := dockerClient.AttachToContainerNonBlocking(docker.AttachToContainerOptions{
 		Container:    container.ID,
-		OutputStream: buildLog,
-		ErrorStream:  buildLog,
+		OutputStream: buildLogStdOut,
+		ErrorStream:  buildLogStdErr,
 		Logs:         true,
 		Stream:       true,
 		Stdout:       true,
@@ -278,6 +290,8 @@ func startJob(payload pushPayload) {
 				buildStatus.State = "failure"
 				buildStatus.Description = fmt.Sprintf("Build with ID %s exited with status %d", logID, ct.State.ExitCode)
 			}
+
+			buildLogMeta.MetaMessage(logTypeMetaFinished, buildStatus.State)
 
 			keepWaiting = false
 		}
