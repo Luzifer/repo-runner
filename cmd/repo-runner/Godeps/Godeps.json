@@ -15,8 +15,8 @@
 		},
 		{
 			"ImportPath": "github.com/Luzifer/repo-runner",
-			"Comment": "v0.3.1-1-g3ddbb56",
-			"Rev": "3ddbb56f739bccd4bc2c2c17b8b58febd009f8f5"
+			"Comment": "v0.5.0-1-g1b459aa",
+			"Rev": "1b459aa744e72802b71390f0e476bdd2e3015b83"
 		},
 		{
 			"ImportPath": "github.com/Microsoft/go-winio",
@@ -117,8 +117,45 @@
 			"Rev": "f11b05a99bc1ddf41d2a61e1fcb150568c87c964"
 		},
 		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "1c83b3eabd45b6d76072b66b746c20815fb2872d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "49c024275504f0341e5a9971eb7ba7fa3dc7af40"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Rev": "527637c0f38a8035d7856bb758e56f7ee2c704a9"
+		},
+		{
 			"ImportPath": "github.com/hashicorp/go-cleanhttp",
 			"Rev": "ad28ea4487f05916463e2423a55166280e8254b5"
+		},
+		{
+			"ImportPath": "github.com/hpcloud/tail",
+			"Comment": "v1.0.0",
+			"Rev": "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+		},
+		{
+			"ImportPath": "github.com/hpcloud/tail/ratelimiter",
+			"Comment": "v1.0.0",
+			"Rev": "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+		},
+		{
+			"ImportPath": "github.com/hpcloud/tail/util",
+			"Comment": "v1.0.0",
+			"Rev": "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+		},
+		{
+			"ImportPath": "github.com/hpcloud/tail/watch",
+			"Comment": "v1.0.0",
+			"Rev": "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+		},
+		{
+			"ImportPath": "github.com/hpcloud/tail/winfile",
+			"Comment": "v1.0.0",
+			"Rev": "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
 		},
 		{
 			"ImportPath": "github.com/opencontainers/runc/libcontainer/system",
@@ -153,6 +190,15 @@
 		{
 			"ImportPath": "golang.org/x/sys/windows",
 			"Rev": "8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9"
+		},
+		{
+			"ImportPath": "gopkg.in/fsnotify.v1",
+			"Comment": "v1.2.0",
+			"Rev": "96c060f6a6b7e0d6f75fddd10efeaca3e5d1bcb0"
+		},
+		{
+			"ImportPath": "gopkg.in/tomb.v1",
+			"Rev": "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
