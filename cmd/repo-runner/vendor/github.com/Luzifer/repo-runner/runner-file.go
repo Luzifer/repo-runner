@@ -18,16 +18,25 @@ const (
 	defaultFetchTimeout       = 5 * time.Second
 )
 
+// RunnerFile contains the instructions what to run when executing build for the specific repo
 type RunnerFile struct {
+	AllowBuild  string            `yaml:"allow_build"`
 	Image       string            `yaml:"image"`
 	Commands    []string          `yaml:"commands"`
 	Environment map[string]string `yaml:"environment"`
+}
+
+func defaultRunnerFile() *RunnerFile {
+	return &RunnerFile{
+		AllowBuild: `^refs/heads/.*`,
+	}
 }
 
 type ghFileResponse struct {
 	Content string `json:"content"`
 }
 
+// LoadFromGithub uses the Github API to fetch the RunnerFile from the repo before pulling the repository
 func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 	// https://developer.github.com/v3/repos/contents/#get-contents
 	// GET /repos/:owner/:repo/contents/:path
@@ -57,7 +66,7 @@ func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 	}
 
 	ghr := ghFileResponse{}
-	if err := json.NewDecoder(res.Body).Decode(&ghr); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(&ghr); err != nil {
 		return nil, err
 	}
 
@@ -66,10 +75,11 @@ func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 		return nil, err
 	}
 
-	rf := &RunnerFile{}
+	rf := defaultRunnerFile()
 	return rf, yaml.Unmarshal(yamlData, rf)
 }
 
+// LoadFromFile loads a local RunnerFile
 func LoadFromFile(filename string) (*RunnerFile, error) {
 	if _, err := os.Stat(filename); err != nil {
 		return nil, err
@@ -80,6 +90,6 @@ func LoadFromFile(filename string) (*RunnerFile, error) {
 		return nil, err
 	}
 
-	rf := &RunnerFile{}
+	rf := defaultRunnerFile()
 	return rf, yaml.Unmarshal(yamlData, rf)
 }

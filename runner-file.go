@@ -20,9 +20,16 @@ const (
 
 // RunnerFile contains the instructions what to run when executing build for the specific repo
 type RunnerFile struct {
+	AllowBuild  string            `yaml:"allow_build"`
 	Image       string            `yaml:"image"`
 	Commands    []string          `yaml:"commands"`
 	Environment map[string]string `yaml:"environment"`
+}
+
+func defaultRunnerFile() *RunnerFile {
+	return &RunnerFile{
+		AllowBuild: `^refs/heads/.*`,
+	}
 }
 
 type ghFileResponse struct {
@@ -68,7 +75,7 @@ func LoadFromGithub(repo, token string) (*RunnerFile, error) {
 		return nil, err
 	}
 
-	rf := &RunnerFile{}
+	rf := defaultRunnerFile()
 	return rf, yaml.Unmarshal(yamlData, rf)
 }
 
@@ -83,6 +90,6 @@ func LoadFromFile(filename string) (*RunnerFile, error) {
 		return nil, err
 	}
 
-	rf := &RunnerFile{}
+	rf := defaultRunnerFile()
 	return rf, yaml.Unmarshal(yamlData, rf)
 }

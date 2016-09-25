@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -109,7 +110,27 @@ func startJob(payload pushPayload) {
 		Description: "Build started with ID " + logID,
 	}
 
-	if err := buildStatus.Set(ctx); err != nil {
+	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
+	if err != nil {
+		log.Printf("[FATA] (%s | %.7s) Could not fetch runner file: %s",
+			payload.Repository.FullName, payload.After, err)
+		return
+	}
+
+	rex, err := regexp.Compile(runnerFile.AllowBuild)
+	if err != nil {
+		log.Printf("[FATA] (%s | %.7s) Invalid regular expression in allow_build: %s",
+			payload.Repository.FullName, payload.After, err)
+		return
+	}
+
+	if !rex.MatchString(payload.Ref) {
+		log.Printf("[INFO] (%s | %.7s) Stopping because ref does not match allow_build ('%s'): %s",
+			payload.Repository.FullName, payload.After, runnerFile.AllowBuild, payload.Ref)
+		return
+	}
+
+	if err = buildStatus.Set(ctx); err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Could not set Github build status: %s",
 			payload.Repository.FullName, payload.After, err)
 	}
@@ -137,13 +158,6 @@ func startJob(payload pushPayload) {
 		log.Printf("[INFO] (%s | %.7s) Build log was written to %s",
 			payload.Repository.FullName, payload.After, logPath)
 	}()
-
-	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
-	if err != nil {
-		log.Printf("[ERRO] (%s | %.7s) Could not fetch runner file: %s",
-			payload.Repository.FullName, payload.After, err)
-		return
-	}
 
 	envMap := env.ListToMap(cfg.DefaultEnv)
 	if runnerFile.Environment != nil {

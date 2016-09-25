@@ -1,13 +1,12 @@
 VERSION := $(shell git describe --tags --exact-match)
 
-ci: qa publish
+ci: publish
 
 qa:
 	go get gopkg.in/alecthomas/gometalinter.v1
-	go vet . ./cmd/repo-runner ./cmd/inner-runner
-	go test . ./cmd/repo-runner ./cmd/inner-runner
+	gometalinter.v1 --vendored-linters --install
 	gometalinter.v1 \
-		-D gotype -D errcheck \
+		-D gotype -D errcheck -D gas -D gocyclo \
 		--sort path --sort line --deadline 1m --cyclo-over 15 \
 		. ./cmd/repo-runner ./cmd/inner-runner
 
