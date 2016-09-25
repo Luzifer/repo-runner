@@ -175,7 +175,7 @@ func startJob(payload pushPayload) {
 
 	envVars := env.MapToList(envMap)
 
-	mounts, volumes := parseMounts(cfg.DefaultMount)
+	mounts, volumes, binds := parseMounts(cfg.DefaultMount)
 
 	dockerRepo, dockerTag := docker.ParseRepositoryTag(runnerFile.Image)
 	auth, authAvailable := dockerAuth.Configs[strings.SplitN(dockerRepo, "/", 2)[0]]
@@ -206,6 +206,7 @@ func startJob(payload pushPayload) {
 			Mounts:  mounts,
 		},
 		HostConfig: &docker.HostConfig{
+			Binds:      binds,
 			Privileged: cfg.Privileged,
 		},
 	})
@@ -283,7 +284,7 @@ func startJob(payload pushPayload) {
 	}
 }
 
-func parseMounts(mountIn []string) (mounts []docker.Mount, volumes map[string]struct{}) {
+func parseMounts(mountIn []string) (mounts []docker.Mount, volumes map[string]struct{}, binds []string) {
 	volumes = make(map[string]struct{})
 	for _, m := range mountIn {
 		if len(m) == 0 {
@@ -293,6 +294,11 @@ func parseMounts(mountIn []string) (mounts []docker.Mount, volumes map[string]st
 		parts := strings.Split(m, ":")
 		if len(parts) != 2 && len(parts) != 3 {
 			log.Printf("[ERRO] Invalid default mount: %s", m)
+			continue
+		}
+
+		if stat, err := os.Stat(parts[0]); err == nil && !stat.IsDir() {
+			binds = append(binds, m)
 			continue
 		}
 
