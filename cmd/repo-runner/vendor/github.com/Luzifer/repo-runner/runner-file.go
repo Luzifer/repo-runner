@@ -21,6 +21,7 @@ const (
 // RunnerFile contains the instructions what to run when executing build for the specific repo
 type RunnerFile struct {
 	AllowBuild  string            `yaml:"allow_build"`
+	CheckoutDir string            `yaml:"checkout_dir"`
 	Image       string            `yaml:"image"`
 	Commands    []string          `yaml:"commands"`
 	Environment map[string]string `yaml:"environment"`
@@ -28,7 +29,8 @@ type RunnerFile struct {
 
 func defaultRunnerFile() *RunnerFile {
 	return &RunnerFile{
-		AllowBuild: `^refs/heads/.*`,
+		AllowBuild:  `^refs/heads/.*`,
+		CheckoutDir: "/src",
 	}
 }
 

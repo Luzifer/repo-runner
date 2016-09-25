@@ -170,6 +170,7 @@ func startJob(payload pushPayload) {
 	envMap["REVISION"] = payload.After
 	envMap["PAYLOAD"] = payload.String()
 	envMap["GITHUB_TOKEN"] = cfg.GithubToken
+	envMap["CHECKOUT_DIR"] = runnerFile.CheckoutDir
 
 	envVars := env.MapToList(envMap)
 

@@ -1,6 +1,7 @@
 ---
 
 image: "quay.io/luzifer/repo-runner-image"
+checkout_dir: /go/src/github.com/Luzifer/repo-runner
 
 commands:
   - make ci

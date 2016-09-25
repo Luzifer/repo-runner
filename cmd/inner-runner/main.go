@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 
 	"github.com/Luzifer/rconfig"
@@ -34,6 +35,7 @@ func init() {
 
 func main() {
 	netrcLocation, err := homedir.Expand("~/.netrc")
+	checkoutDir := os.Getenv("CHECKOUT_DIR")
 
 	log.Printf("[INFO] Setting access token for HTTPs clone")
 	netrcContent := fmt.Sprintf("machine github.com\nlogin auth\npassword %s", os.Getenv("GITHUB_TOKEN"))
@@ -41,23 +43,27 @@ func main() {
 		log.Fatalf("[FATA] Unable to write ~/.netrc: %s", err)
 	}
 
-	log.Printf("[INFO] Checking out repository to /src")
-	if err := execute("", "/usr/bin/git", "clone", os.Getenv("CLONE_URL"), "/src"); err != nil {
+	if err := os.MkdirAll(path.Dir(strings.TrimRight(checkoutDir, "/")), 0755); err != nil {
+		log.Fatalf("[FATA] Could not create required directories: %s", err)
+	}
+
+	log.Printf("[INFO] Checking out repository to %s", checkoutDir)
+	if err := execute("", "/usr/bin/git", "clone", os.Getenv("CLONE_URL"), checkoutDir); err != nil {
 		log.Fatalf("[FATA] Could not clone repository: %s", err)
 	}
 
 	log.Printf("[INFO] Checking out rev %s in repository", os.Getenv("REVISION"))
-	if err := execute("/src", "/usr/bin/git", "reset", "--hard", os.Getenv("REVISION")); err != nil {
+	if err := execute(checkoutDir, "/usr/bin/git", "reset", "--hard", os.Getenv("REVISION")); err != nil {
 		log.Fatalf("[FATA] Could not check out revision: %s", err)
 	}
 
-	runnerFile, err := reporunner.LoadFromFile("/src/.repo-runner.yaml")
+	runnerFile, err := reporunner.LoadFromFile(path.Join(checkoutDir, ".repo-runner.yaml"))
 	if err != nil {
 		log.Fatalf("[FATA] Could not load runner-configuration: %s", err)
 	}
 
 	for _, cmd := range runnerFile.Commands {
-		if err := execute("/src", "/bin/sh", "-c", cmd); err != nil {
+		if err := execute(checkoutDir, "/bin/sh", "-c", cmd); err != nil {
 			log.Fatalf("[FATA] Command exitted non-zero, stopping now.")
 		}
 	}
