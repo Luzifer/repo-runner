@@ -10,7 +10,7 @@ RUN set -ex \
  && mv /go/bin/inner-runner /usr/local/bin/inner-runner \
  && rm -rf /go/src /go/bin /go/pkg \
  && curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz | tar -xz -C /tmp \
- && mv /tmp/docker/docker /usr/local/bin/docker \
+ && mv /tmp/docker/* /usr/local/bin \
  && rm -rf /tmp/docker
 
 ENTRYPOINT ["/usr/local/bin/inner-runner"]
