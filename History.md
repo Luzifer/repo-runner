@@ -1,10 +1,14 @@
+# 0.4.0 / 2016-09-25
+
+  * Make checkout dir configurable
+
 # 0.3.1 / 2016-09-25
 
   * Move code into GOPATH on CI
 
 # 0.3.0 / 2016-09-25
 
-  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp; head
+  * Limit builds to heads by default ignoring tags to prevent double builds when pushing tag &amp;amp; head
 
 # 0.2.1 / 2016-09-25
 
