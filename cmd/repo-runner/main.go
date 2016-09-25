@@ -31,6 +31,7 @@ var (
 		Listen         string        `flag:"listen" default:":3000" description:"IP/Port to listen on"`
 		LogDir         string        `flag:"log-dir" default:"./logs/" description:"Where to write build logs?"`
 		MaxBuildTime   time.Duration `flag:"max-build-time" default:"1h" description:"Maximum time the build may run"`
+		Privileged     bool          `flag:"privileged" default:"false" description:"Run container privileged"`
 		RequireSecret  string        `flag:"require-secret" default:"" description:"(Optional) Require a secret when receiving the hookshot"`
 		VersionAndExit bool          `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
@@ -203,6 +204,9 @@ func startJob(payload pushPayload) {
 			Env:     envVars,
 			Volumes: volumes,
 			Mounts:  mounts,
+		},
+		HostConfig: &docker.HostConfig{
+			Privileged: cfg.Privileged,
 		},
 	})
 	if err != nil {
