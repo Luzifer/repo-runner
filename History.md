@@ -1,3 +1,7 @@
+# 0.5.1 / 2016-09-25
+
+  * Fix: Update godeps
+
 # 0.5.0 / 2016-09-25
 
   * [runner] Implement log streaming with linked URL on Github
