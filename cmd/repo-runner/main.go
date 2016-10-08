@@ -25,7 +25,7 @@ import (
 
 var (
 	cfg = struct {
-		BaseURL        string        `flag:"base-url" default:"http://127.0.0.1:3000" description:"URL this is reachable at (for build status URLs)"`
+		BaseURL        string        `flag:"base-url" env:"BASE_URL" default:"http://127.0.0.1:3000" description:"URL this is reachable at (for build status URLs)"`
 		DefaultEnv     []string      `flag:"default-env,e" default:"" description:"Environment variables to set when starting the container"`
 		DefaultMount   []string      `flag:"default-mount,v" default:"" description:"Mountpoints to be forced into the container"`
 		DockerSocket   string        `flag:"docker-sock" default:"unix:///var/run/docker.sock" description:"Docker socket / tcp address"`
