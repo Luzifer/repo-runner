@@ -53,7 +53,7 @@
 					case "https:":
 						return "wss://" + location.host + "/log/stream/" + logID;
 					default:
-						return "ws://" + location.host + "/log/stream" + logID;
+						return "ws://" + location.host + "/log/stream/" + logID;
 				}
 			})();
 			sock = new WebSocket(endpoint);
