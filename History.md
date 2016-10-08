@@ -1,3 +1,11 @@
+# 0.6.0 / 2016-10-09
+
+  * Fix: Add missing slash
+  * Add Dockerfile
+  * Allow to configure BaseURL through ENV
+  * Add README
+  * Support reading require-secret from env
+
 # 0.5.1 / 2016-09-25
 
   * Fix: Update godeps
