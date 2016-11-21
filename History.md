@@ -1,3 +1,7 @@
+# 0.7.0 / 2016-11-21
+
+  * Install bash in container
+
 # 0.6.0 / 2016-10-09
 
   * Fix: Add missing slash
