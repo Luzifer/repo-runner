@@ -1,3 +1,7 @@
+# 0.9.0 / 2016-12-14
+
+  * Make navbar stick to top
+
 # 0.8.1 / 2016-12-14
 
   * Fix: Javascript switch requires break
