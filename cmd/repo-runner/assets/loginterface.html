@@ -90,12 +90,16 @@
           switch(data.type) {
             case "meta_repo-url":
               $('#repo-link').attr('href', data.message);
+              break;
             case "meta_repo-name":
               $('#repo-link').text(data.message);
+              break;
             case "meta_start":
               $('#build-status').text('running...');
+              break;
             case "meta_finished":
               $('#build-status').text('finished.');
+              break;
           }
           return;
         }
