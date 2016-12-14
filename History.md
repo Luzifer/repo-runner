@@ -1,3 +1,7 @@
+# 0.8.1 / 2016-12-14
+
+  * Fix: Javascript switch requires break
+
 # 0.8.0 / 2016-12-14
 
   * Add navbar with build details to logs page
