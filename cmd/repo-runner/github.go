@@ -19,6 +19,7 @@ type pushPayload struct {
 		FullName string `json:"full_name"`
 		Private  bool   `json:"private"`
 		CloneURL string `json:"clone_url"`
+		HTMLURL  string `json:"html_url"`
 	} `json:"repository"`
 }
 

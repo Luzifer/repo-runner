@@ -165,6 +165,8 @@ func startJob(payload pushPayload) {
 	buildLogStdErr := newLogWriter("stderr", buildLog)
 
 	buildLogMeta.MetaMessage(logTypeMetaStart, payload.String())
+	buildLogMeta.MetaMessage(logTypeMetaRepoName, payload.Repository.FullName)
+	buildLogMeta.MetaMessage(logTypeMetaRepoURL, payload.Repository.HTMLURL)
 
 	defer func() {
 		log.Printf("[INFO] (%s | %.7s) Build log was written to %s",

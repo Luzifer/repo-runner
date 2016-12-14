@@ -19,6 +19,8 @@ const (
 	logTypeDefault      = "log"
 	logTypeMetaStart    = "meta_start"
 	logTypeMetaFinished = "meta_finished"
+	logTypeMetaRepoName = "meta_repo-name"
+	logTypeMetaRepoURL  = "meta_repo-url"
 )
 
 type logLine struct {

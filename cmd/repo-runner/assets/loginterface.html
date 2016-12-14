@@ -31,7 +31,34 @@
     <![endif]-->
   </head>
   <body>
-		<div class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Repo-Runner</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li>
+              <p class="navbar-text">
+                Build for repository <a href="#" class="navbar-link" id="repo-link"></a> &middot;
+                Status: <span id="build-status">waiting...</span>
+              </p>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
       <div class="row">
         <div class="col-md-12">
           <ol id="logs"></ol>
@@ -47,19 +74,29 @@
     <script>
       var logID = "{{ .LogID }}";
 
-			var endpoint;
-			endpoint = (function() {
-				switch (location.protocol) {
-					case "https:":
-						return "wss://" + location.host + "/log/stream/" + logID;
-					default:
-						return "ws://" + location.host + "/log/stream/" + logID;
-				}
-			})();
-			sock = new WebSocket(endpoint);
-			sock.onmessage = function(evt){
+      var endpoint;
+      endpoint = (function() {
+        switch (location.protocol) {
+          case "https:":
+            return "wss://" + location.host + "/log/stream/" + logID;
+          default:
+            return "ws://" + location.host + "/log/stream/" + logID;
+        }
+      })();
+      sock = new WebSocket(endpoint);
+      sock.onmessage = function(evt){
         var data = JSON.parse(evt.data);
         if (data.channel === "meta") {
+          switch(data.type) {
+            case "meta_repo-url":
+              $('#repo-link').attr('href', data.message);
+            case "meta_repo-name":
+              $('#repo-link').text(data.message);
+            case "meta_start":
+              $('#build-status').text('running...');
+            case "meta_finished":
+              $('#build-status').text('finished.');
+          }
           return;
         }
 
