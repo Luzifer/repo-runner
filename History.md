@@ -1,3 +1,7 @@
+# 0.8.0 / 2016-12-14
+
+  * Add navbar with build details to logs page
+
 # 0.7.0 / 2016-11-21
 
   * Install bash in container
