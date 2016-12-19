@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/Luzifer/rconfig"
-	reporunner "github.com/Luzifer/repo-runner"
 	homedir "github.com/mitchellh/go-homedir"
+	reporunner "github.com/repo-runner/repo-runner"
 )
 
 var (

@@ -16,10 +16,10 @@ import (
 
 	"github.com/Luzifer/go_helpers/env"
 	"github.com/Luzifer/rconfig"
-	reporunner "github.com/Luzifer/repo-runner"
 	"github.com/ejholmes/hookshot"
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/gorilla/mux"
+	reporunner "github.com/repo-runner/repo-runner"
 	uuid "github.com/satori/go.uuid"
 )
 

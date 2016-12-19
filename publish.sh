@@ -15,13 +15,13 @@ set -x
 go get github.com/aktau/github-release
 go get github.com/mitchellh/gox
 
-github-release release --user Luzifer --repo repo-runner --tag ${VERSION} --name ${VERSION} || true
+github-release release --user repo-runner --repo repo-runner --tag ${VERSION} --name ${VERSION} || true
 
 for binary in repo-runner inner-runner; do
 	cd cmd/${binary}
 	gox -ldflags="-X main.version=${VERSION}" -osarch="linux/386 linux/amd64 linux/arm"
 	for file in ${binary}_*; do
-		github-release upload --user Luzifer --repo repo-runner --tag ${VERSION} --name ${file} --file ${file}
+		github-release upload --user repo-runner --repo repo-runner --tag ${VERSION} --name ${file} --file ${file}
 	done
   cd -
 done

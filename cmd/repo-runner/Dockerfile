@@ -4,8 +4,8 @@ MAINTAINER Knut Ahlers <knut@ahlers.me>
 
 ENV CGO_ENABLED=0
 
-ADD . /go/src/github.com/Luzifer/repo-runner/cmd/repo-runner
-WORKDIR /go/src/github.com/Luzifer/repo-runner/cmd/repo-runner
+ADD . /go/src/github.com/repo-runner/repo-runner/cmd/repo-runner
+WORKDIR /go/src/github.com/repo-runner/repo-runner/cmd/repo-runner
 
 RUN set -ex \
  && apk add --update git ca-certificates \
