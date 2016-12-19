@@ -1,7 +1,7 @@
 ---
 
-image: "quay.io/luzifer/repo-runner-image"
-checkout_dir: /go/src/github.com/Luzifer/repo-runner
+image: "quay.io/repo-runner/alpine-golang"
+checkout_dir: /go/src/github.com/repo-runner/repo-runner
 
 commands:
   - make ci
