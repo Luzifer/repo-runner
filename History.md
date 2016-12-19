@@ -1,3 +1,7 @@
+# 0.10.0 / 2016-12-19
+
+  * Move repo-runner to its own Github organization
+
 # 0.9.0 / 2016-12-14
 
   * Make navbar stick to top
