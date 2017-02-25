@@ -1,3 +1,8 @@
+# 0.11.0 / 2017-02-25
+
+  * Implement auto-scrolling
+  * Move to new builder image
+
 # 0.10.0 / 2016-12-19
 
   * Move repo-runner to its own Github organization
