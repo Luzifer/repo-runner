@@ -72,6 +72,9 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"
+            integrity="sha256-7QS1cHsH75h3IFgrFKsdhmKHHpWqF82sb/9vNLqcqs0=" crossorigin="anonymous"></script>
+
     <script>
       var logID = "{{ .LogID }}";
 
@@ -109,6 +112,7 @@
         $(line).find('span').text(data.message);
         $(line).addClass(data.channel);
         $(line).appendTo($('#logs'));
+        $.scrollTo(line);
       };
     </script>
   </body>
