@@ -1,5 +1,3 @@
-VERSION := $(shell git describe --tags --exact-match)
-
 ci: publish
 
 qa:
@@ -10,11 +8,6 @@ qa:
 		--sort path --sort line --deadline 1m --cyclo-over 15 \
 		. ./cmd/repo-runner ./cmd/inner-runner
 
-ifneq ($(strip $(VERSION)),)
 publish:
-	VERSION=$(VERSION) sh -e publish.sh
-else
-publish:
-	true
-endif
-
+	curl -sSLo golang.sh https://raw.githubusercontent.com/Luzifer/github-publish/master/golang.sh
+	bash golang.sh

@@ -8,3 +8,4 @@ commands:
 
 environment:
   CGO_ENABLED: 0
+  PACKAGES: github.com/repo-runner/repo-runner/cmd/inner-runner github.com/repo-runner/repo-runner/cmd/repo-runner
