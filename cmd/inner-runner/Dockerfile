@@ -2,7 +2,7 @@ FROM golang:alpine
 
 MAINTAINER Knut Ahlers <knut@ahlers.me>
 
-ADD . /go/src/github.com/Luzifer/repo-runner/cmd/inner-runner
+ADD . /go/src/github.com/repo-runner/repo-runner/cmd/inner-runner
 
 RUN set -ex \
  && apk add --update git ca-certificates make curl bash \
