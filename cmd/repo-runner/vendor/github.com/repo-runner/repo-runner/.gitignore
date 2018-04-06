@@ -1,4 +1,0 @@
-cmd/repo-runner/repo-runner
-cmd/repo-runner/logs
-cmd/inner-runner/inner-runner_*
-cmd/repo-runner/repo-runner_*
