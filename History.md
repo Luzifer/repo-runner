@@ -1,3 +1,9 @@
+# 0.12.0 / 2018-04-06
+
+  * Use generic builder
+  * Use global vendoring
+  * Move Dockerfile to root, add license
+
 # 0.11.0 / 2017-02-25
 
   * Implement auto-scrolling
