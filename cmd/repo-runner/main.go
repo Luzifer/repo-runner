@@ -109,7 +109,11 @@ func startJob(payload pushPayload) {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.MaxBuildTime)
 	defer cancel()
 
-	logID := uuid.NewV4().String()
+	id, err := uuid.NewV4()
+	log.Printf("[FATA] (%s | %.7s) Could not generate an UUID: %s",
+		payload.Repository.FullName, payload.After, err)
+
+	logID := id.String()
 	buildStatus := &githubBuildStatus{
 		Repo:        payload.Repository.FullName,
 		SHA:         payload.After,
