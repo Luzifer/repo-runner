@@ -1,3 +1,8 @@
+# 0.13.0 / 2018-08-22
+
+  * Add status handler for health checking
+  * Remove Dockerfile (moved to separate repo)
+
 # 0.12.0 / 2018-04-06
 
   * Use generic builder
