@@ -39,12 +39,12 @@ type ghFileResponse struct {
 }
 
 // LoadFromGithub uses the Github API to fetch the RunnerFile from the repo before pulling the repository
-func LoadFromGithub(repo, token string) (*RunnerFile, error) {
+func LoadFromGithub(repo, token, ref string) (*RunnerFile, error) {
 	// https://developer.github.com/v3/repos/contents/#get-contents
 	// GET /repos/:owner/:repo/contents/:path
 
-	u := fmt.Sprintf("https://api.github.com/repos/%s/contents/%s",
-		repo, defaultRunnerFileLocation)
+	u := fmt.Sprintf("https://api.github.com/repos/%s/contents/%s?ref=%s",
+		repo, defaultRunnerFileLocation, ref)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err

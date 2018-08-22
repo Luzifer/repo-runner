@@ -123,7 +123,7 @@ func startJob(payload pushPayload) {
 		TargetURL:   strings.TrimRight(cfg.BaseURL, "/") + "/log/" + logID,
 	}
 
-	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken)
+	runnerFile, err := reporunner.LoadFromGithub(payload.Repository.FullName, cfg.GithubToken, payload.After)
 	if err != nil {
 		log.Printf("[FATA] (%s | %.7s) Could not fetch runner file: %s",
 			payload.Repository.FullName, payload.After, err)
