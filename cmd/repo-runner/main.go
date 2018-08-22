@@ -80,6 +80,7 @@ func main() {
 	r := mux.NewRouter()
 	r.Handle("/hook", hr)
 	registerLogHandlers(r.PathPrefix("/log").Subrouter())
+	r.HandleFunc("/status", func(res http.ResponseWriter, r *http.Request) { res.WriteHeader(http.StatusOK) })
 
 	http.ListenAndServe(cfg.Listen, r)
 }
