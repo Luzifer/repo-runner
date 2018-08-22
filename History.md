@@ -1,3 +1,8 @@
+# 0.14.0 / 2018-08-22
+
+  * Update vendors, switch to dep for vendoring
+  * Fetch the runner-file for the pushed revision instead of master
+
 # 0.13.0 / 2018-08-22
 
   * Add status handler for health checking
