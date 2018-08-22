@@ -18,9 +18,9 @@ import (
 	"github.com/Luzifer/rconfig"
 	"github.com/ejholmes/hookshot"
 	docker "github.com/fsouza/go-dockerclient"
+	uuid "github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	reporunner "github.com/repo-runner/repo-runner"
-	uuid "github.com/satori/go.uuid"
 )
 
 var (
