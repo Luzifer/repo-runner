@@ -1,3 +1,7 @@
+# 0.14.1 / 2018-08-22
+
+  * Fix: Only print UUID error on errors and break on fatal
+
 # 0.14.0 / 2018-08-22
 
   * Update vendors, switch to dep for vendoring
