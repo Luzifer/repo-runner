@@ -1,3 +1,7 @@
+# 0.15.0 / 2018-09-29
+
+  * Push ref into container
+
 # 0.14.1 / 2018-08-22
 
   * Fix: Only print UUID error on errors and break on fatal
