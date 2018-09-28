@@ -194,6 +194,7 @@ func startJob(payload pushPayload) {
 	envMap["PAYLOAD"] = payload.String()
 	envMap["GITHUB_TOKEN"] = cfg.GithubToken
 	envMap["CHECKOUT_DIR"] = runnerFile.CheckoutDir
+	envMap["REF"] = payload.Ref
 
 	envVars := env.MapToList(envMap)
 
