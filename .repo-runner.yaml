@@ -1,6 +1,6 @@
 ---
 
-image: "quay.io/repo-runner/alpine-golang"
+image: "reporunner/golang-alpine"
 checkout_dir: /go/src/github.com/repo-runner/repo-runner
 
 commands:
