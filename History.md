@@ -1,3 +1,7 @@
+# 0.15.1 / 2019-05-14
+
+  * Fix: Specify docker configuration directory
+
 # 0.15.0 / 2018-09-29
 
   * Push ref into container
