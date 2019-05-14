@@ -1,3 +1,8 @@
+# 0.16.0 / 2019-05-14
+
+  * Add config option to limit used CPU power
+  * Update reporunner image
+
 # 0.15.1 / 2019-05-14
 
   * Fix: Specify docker configuration directory
