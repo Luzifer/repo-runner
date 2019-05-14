@@ -26,6 +26,7 @@ import (
 var (
 	cfg = struct {
 		BaseURL        string        `flag:"base-url" env:"BASE_URL" default:"http://127.0.0.1:3000" description:"URL this is reachable at (for build status URLs)"`
+		CPULimit       float64       `flag:"cpu-limit" env:"CPU_LIMIT" default:"0" description:"Limit the number of CPUs the spawned containers may use (i.e. 1.5 for 1 and a half CPUs)"`
 		DefaultEnv     []string      `flag:"default-env,e" default:"" description:"Environment variables to set when starting the container"`
 		DefaultMount   []string      `flag:"default-mount,v" default:"" description:"Mountpoints to be forced into the container"`
 		DockerSocket   string        `flag:"docker-sock" default:"unix:///var/run/docker.sock" description:"Docker socket / tcp address"`
@@ -43,6 +44,8 @@ var (
 	dockerClient *docker.Client
 	dockerAuth   *docker.AuthConfigurations
 )
+
+const cpuPeriod = 100000
 
 func init() {
 	if err := rconfig.Parse(&cfg); err != nil {
@@ -220,6 +223,17 @@ func startJob(payload pushPayload) {
 
 	log.Printf("[INFO] (%s | %.7s) Creating container",
 		payload.Repository.FullName, payload.After)
+
+	hostConfig := &docker.HostConfig{
+		Binds:      binds,
+		Privileged: cfg.Privileged,
+	}
+
+	if cfg.CPULimit > 0 {
+		hostConfig.CPUPeriod = cpuPeriod
+		hostConfig.CPUQuota = int64(cpuPeriod * cfg.CPULimit)
+	}
+
 	container, err := dockerClient.CreateContainer(docker.CreateContainerOptions{
 		Name: logID,
 		Config: &docker.Config{
@@ -228,10 +242,7 @@ func startJob(payload pushPayload) {
 			Volumes: volumes,
 			Mounts:  mounts,
 		},
-		HostConfig: &docker.HostConfig{
-			Binds:      binds,
-			Privileged: cfg.Privileged,
-		},
+		HostConfig: hostConfig,
 	})
 	if err != nil {
 		log.Printf("[ERRO] (%s | %.7s) Could not create container: %s",
