@@ -14,7 +14,7 @@ RUN set -ex \
 
 EXPOSE 3000
 
-VOLUME ["/var/run/docker.sock", "/root/.docker/config.json", "/var/log/repo-runner"]
+VOLUME ["/var/run/docker.sock", "/root/.docker", "/var/log/repo-runner"]
 
 ENTRYPOINT ["/go/bin/repo-runner", "--log-dir=/var/log/repo-runner/"]
 CMD ["--"]
