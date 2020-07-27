@@ -77,44 +77,37 @@
 
     <script src="bundle.js"></script>
     <script>
-      var logID = "{{ .LogID }}";
+      const logID = "{{ .LogID }}"
+      const endpoint = `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}/log/stream/${logID}`
 
-      var endpoint;
-      endpoint = (function() {
-        switch (location.protocol) {
-          case "https:":
-            return "wss://" + location.host + "/log/stream/" + logID;
-          default:
-            return "ws://" + location.host + "/log/stream/" + logID;
-        }
-      })();
-      sock = new WebSocket(endpoint);
-      sock.onmessage = function(evt){
-        var data = JSON.parse(evt.data);
+      const sock = new WebSocket(endpoint)
+      sock.onmessage = (evt) => {
+        const data = JSON.parse(evt.data)
+
         if (data.channel === "meta") {
           switch(data.type) {
             case "meta_repo-url":
-              $('#repo-link').attr('href', data.message);
-              break;
+              $('#repo-link').attr('href', data.message)
+              break
             case "meta_repo-name":
-              $('#repo-link').text(data.message);
-              break;
+              $('#repo-link').text(data.message)
+              break
             case "meta_start":
-              $('#build-status').text('running...');
-              break;
+              $('#build-status').text('running...')
+              break
             case "meta_finished":
-              $('#build-status').text('finished.');
-              break;
+              $('#build-status').text('finished.')
+              break
           }
-          return;
+          return
         }
 
-        var line = $('<li><span></span></li>');
-        $(line).find('span').text(data.message);
-        $(line).addClass(data.channel);
-        $(line).appendTo($('#logs'));
-        $.scrollTo(line);
-      };
+        var line = $('<li><span></span></li>')
+        $(line).find('span').text(data.message.replace(/\x1b\[[0-9;]+m/g, ''))
+        $(line).addClass(data.channel)
+        $(line).appendTo($('#logs'))
+        $.scrollTo(line)
+      }
     </script>
   </body>
 </html>
