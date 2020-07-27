@@ -1,7 +1,9 @@
 FROM golang:alpine as builder
 
 COPY . /go/src/github.com/repo-runner/repo-runner
-WORKDIR /go/src/github.com/repo-runner/repo-runner
+WORKDIR /go/src/github.com/repo-runner/repo-runner/cmd/repo-runner
+
+ENV CGO_ENABLED=0
 
 RUN set -ex \
  && apk add --update git \
