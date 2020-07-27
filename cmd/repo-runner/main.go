@@ -48,6 +48,7 @@ var (
 const cpuPeriod = 100000
 
 func init() {
+	rconfig.AutoEnv(true)
 	if err := rconfig.Parse(&cfg); err != nil {
 		log.Fatalf("Unable to parse commandline options: %s", err)
 	}
