@@ -78,8 +78,23 @@ func (l *logWriter) Write(p []byte) (n int, err error) {
 }
 
 func registerLogHandlers(r *mux.Router) {
+	r.PathPrefix("/{logID}/{fn}").HandlerFunc(handleLogAsset)
 	r.HandleFunc("/{logID}", handleLogInterface)
 	r.HandleFunc("/stream/{logID}", handleLogStream)
+}
+
+func handleLogAsset(w http.ResponseWriter, r *http.Request) {
+	var vars = mux.Vars(r)
+
+	info, err := AssetInfo(path.Join("assets", vars["fn"]))
+	if err != nil {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+
+	http.ServeContent(w, r, vars["fn"], info.ModTime(), bytes.NewReader(
+		MustAsset(path.Join("assets", vars["fn"])),
+	))
 }
 
 func handleLogInterface(w http.ResponseWriter, r *http.Request) {
