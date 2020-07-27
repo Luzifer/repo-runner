@@ -8,7 +8,7 @@
     <title>Build logs for Job {{ .LogID }}</title>
 
     <!-- Bootstrap -->
-    <link href="bundle.css" rel="stylesheet">
+    <link href="assets/bundle.css" rel="stylesheet">
 
     <style>
       /* source-code-pro-regular - latin */
@@ -17,8 +17,8 @@
         font-style: normal;
         font-weight: 400;
         src: local('Source Code Pro Regular'), local('SourceCodePro-Regular'),
-             url('source-code-pro-v11-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-             url('source-code-pro-v11-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+             url('assets/source-code-pro-v11-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+             url('assets/source-code-pro-v11-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
       }
 
       body { padding-top: 70px; }
@@ -75,7 +75,7 @@
       </div>
     </div>
 
-    <script src="bundle.js"></script>
+    <script src="assets/bundle.js"></script>
     <script>
       const logID = "{{ .LogID }}"
       const endpoint = `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}/log/stream/${logID}`

@@ -78,7 +78,7 @@ func (l *logWriter) Write(p []byte) (n int, err error) {
 }
 
 func registerLogHandlers(r *mux.Router) {
-	r.HandleFunc("/{logID}/{fn}", handleLogAsset)
+	r.HandleFunc("/assets/{fn}", handleLogAsset)
 	r.HandleFunc("/{logID}", handleLogInterface)
 	r.HandleFunc("/stream/{logID}", handleLogStream)
 }
