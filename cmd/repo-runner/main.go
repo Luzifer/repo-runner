@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Luzifer/go_helpers/env"
-	"github.com/Luzifer/rconfig"
+	"github.com/Luzifer/go_helpers/v2/env"
+	"github.com/Luzifer/rconfig/v2"
 	"github.com/ejholmes/hookshot"
 	docker "github.com/fsouza/go-dockerclient"
 	uuid "github.com/gofrs/uuid"

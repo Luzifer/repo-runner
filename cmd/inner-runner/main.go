@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Luzifer/rconfig"
+	"github.com/Luzifer/rconfig/v2"
 	homedir "github.com/mitchellh/go-homedir"
 	reporunner "github.com/repo-runner/repo-runner"
 )
