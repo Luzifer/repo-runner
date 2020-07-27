@@ -2,13 +2,14 @@
 set -euxo pipefail
 
 css_deps=(
-	npm/bootstrap@3.4.1/dist/css/bootstrap.min.css
+	npm/bootstrap@4.5.0/dist/css/bootstrap.min.css
+	npm/bootstrap-vue@2.15.0/dist/bootstrap-vue.min.css
+	npm/bootswatch@4.5.0/dist/darkly/bootstrap.min.css
 )
 
 js_deps=(
-	npm/jquery@3.5.1
-	npm/bootstrap@3.4.1/dist/js/bootstrap.min.js
-	npm/jquery.scrollto@2.1.2
+	npm/vue@2.6.11
+	npm/bootstrap-vue@2.15.0/dist/bootstrap-vue.min.js
 )
 
 IFS=$','
@@ -16,8 +17,19 @@ curl -sSfLo ./assets/bundle.css "https://cdn.jsdelivr.net/combine/${css_deps[*]}
 curl -sSfLo ./assets/bundle.js "https://cdn.jsdelivr.net/combine/${js_deps[*]}"
 
 # Bundling font
-curl -sSfLo ./assets/font.zip "https://google-webfonts-helper.herokuapp.com/api/fonts/source-code-pro?download=zip&subsets=latin&variants=regular&formats=woff,woff2"
-pushd assets
+here=$(pwd)
+fontdir=$(mktemp -d)
+trap "rm -rf ${fontdir}" EXIT
+
+pushd ${fontdir}
+
+# Source Code Pro Google Font
+curl -sSfLo font.zip "https://google-webfonts-helper.herokuapp.com/api/fonts/source-code-pro?download=zip&subsets=latin&variants=regular&formats=woff,woff2"
 unzip font.zip
-rm font.zip
+cp source-code-pro* "${here}/assets/"
+
+curl -sSfLo fa.zip "https://use.fontawesome.com/releases/v5.14.0/fontawesome-free-5.14.0-web.zip"
+unzip fa.zip
+cp fontawesome-free-*/sprites/solid.svg "${here}/assets/fa-solid.svg"
+
 popd

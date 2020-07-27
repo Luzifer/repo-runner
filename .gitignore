@@ -2,6 +2,7 @@ cmd/inner-runner/inner-runner
 cmd/inner-runner/inner-runner_*
 cmd/repo-runner/assets/bundle.css
 cmd/repo-runner/assets/bundle.js
+cmd/repo-runner/assets/fa-solid.svg
 cmd/repo-runner/assets/source-code-pro-v11-latin-regular.woff
 cmd/repo-runner/assets/source-code-pro-v11-latin-regular.woff2
 cmd/repo-runner/logs
