@@ -7,5 +7,6 @@ commands:
   - make ci
 
 environment:
+  ARCHS: linux/amd64 linux/arm darwin/amd64
   CGO_ENABLED: 0
   PACKAGES: github.com/repo-runner/repo-runner/cmd/inner-runner github.com/repo-runner/repo-runner/cmd/repo-runner
