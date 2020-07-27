@@ -1,3 +1,11 @@
+# 0.17.0 / 2020-07-27
+
+  * Rewrite presentation logic
+  * Remove Windows support
+  * Bundle external assets instead of direct-loading them
+  * Update Dockerfile
+  * Migrate to go modules setup
+
 # 0.16.0 / 2019-05-14
 
   * Add config option to limit used CPU power
